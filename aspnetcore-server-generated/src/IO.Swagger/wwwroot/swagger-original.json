@@ -1,0 +1,404 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "This is the test of the SDC REST API  \n[SDC REST API Doc](https://goo.gl/YLo7Fq) and more on SDC at \n[http://wiki.ihe.net/index.php/Structured_Data_Capture](http://wiki.ihe.net/index.php/Structured_Data_Capture).\n",
+    "version" : "1.0.0",
+    "title" : "IHE Structured Data Capture API",
+    "termsOfService" : "http://swagger.io/terms/",
+    "contact" : {
+      "email" : "sdcworkgroup@ihe.net"
+    },
+    "license" : {
+      "name" : "Apache 2.0",
+      "url" : "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "host" : "virtserver.swaggerhub.com",
+  "basePath" : "/IHE-SDC4/ihesdc0/1.0.0",
+  "tags" : [ {
+    "name" : "SDC API Test",
+    "description" : "Testing the SDC API",
+    "externalDocs" : {
+      "description" : "SDC API Doc",
+      "url" : "https://goo.gl/YLo7Fq"
+    }
+  } ],
+  "schemes" : [ "https", "http" ],
+  "paths" : {
+    "/manager/formPackage" : {
+      "get" : {
+        "tags" : [ "SDC API Test" ],
+        "summary" : "Retrieves a Form Package",
+        "description" : "Form Filler requests a Form Package from Form Manager",
+        "operationId" : "RetrievePackage",
+        "produces" : [ "application/json", "application/xml" ],
+        "parameters" : [ {
+          "name" : "_baseURI",
+          "in" : "query",
+          "description" : "The ID that uniquely identifies the author organization",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "_lineage",
+          "in" : "query",
+          "description" : "Shared ID for all versions of an SDC package",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "_version",
+          "in" : "query",
+          "description" : "The version of the package you wish to retrieve",
+          "required" : false,
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "enum" : [ "last", "first", "version_string" ],
+            "default" : "last"
+          },
+          "collectionFormat" : "multi"
+        }, {
+          "name" : "_offset",
+          "in" : "query",
+          "description" : "An integer which can be set to retrieve version prior or later than requested version (e.g. -1 will retrieve version before)",
+          "required" : false,
+          "type" : "integer",
+          "collectionFormat" : "multi"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/SDCFormPackage"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid status value"
+          }
+        },
+        "security" : [ {
+          "SDC_auth" : [ "write:pets", "read:pets" ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "SDC API Test" ],
+        "summary" : "Upload submit a form to Form Manager",
+        "operationId" : "insertPackage",
+        "consumes" : [ "application/json", "application/xml" ],
+        "produces" : [ "application/xml" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "description" : "The SDC Form Package",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/SDCFormPackage"
+          }
+        } ],
+        "responses" : {
+          "405" : {
+            "description" : "Invalid input"
+          }
+        },
+        "security" : [ {
+          "SDC_auth" : [ "write:pets", "read:pets" ]
+        } ]
+      }
+    },
+    "/manager/formPackage/list" : {
+      "get" : {
+        "tags" : [ "SDC API Test" ],
+        "summary" : "Retrieves a list of Form Packages",
+        "description" : "Form Filler requests a list of Form Packages from Form Manager",
+        "operationId" : "RetrievePackageList",
+        "produces" : [ "application/json", "application/xml" ],
+        "parameters" : [ {
+          "name" : "_baseURI",
+          "in" : "query",
+          "description" : "The ID that uniquely identifies the author organization",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "_contentDomain",
+          "in" : "query",
+          "description" : "The specialty the form is related to. contentDomain can be specified as Pathology, Radiology, Surgery, etc",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "_sdcSchemaVersion",
+          "in" : "query",
+          "description" : "The Schema version the Package is using",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "_lineage",
+          "in" : "query",
+          "description" : "Shared ID for all versions of an SDC package",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "_version",
+          "in" : "query",
+          "description" : "The version of the package you wish to retrieve",
+          "required" : false,
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "enum" : [ "all", "last", "current", "first" ],
+            "default" : "last"
+          },
+          "collectionFormat" : "multi"
+        }, {
+          "name" : "_offset",
+          "in" : "query",
+          "description" : "An integer which can be set to retrieve version prior or later than requested version (e.g. -1 will retrieve version before)",
+          "required" : false,
+          "type" : "integer",
+          "collectionFormat" : "multi"
+        }, {
+          "name" : "status",
+          "in" : "query",
+          "description" : "The current status of the form",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/SDCFormPackage"
+              }
+            }
+          },
+          "400" : {
+            "description" : "Invalid status value"
+          }
+        },
+        "security" : [ {
+          "SDC_auth" : [ "write:pets", "read:pets" ]
+        } ]
+      }
+    },
+    "/receiver/responsePackage" : {
+      "get" : {
+        "tags" : [ "SDC API Test" ],
+        "summary" : "Retrieves a response package",
+        "operationId" : "retrieveResponsePackage",
+        "consumes" : [ "application/json", "application/xml" ],
+        "produces" : [ "application/xml" ],
+        "parameters" : [ {
+          "name" : "_pkgInstanceID",
+          "in" : "query",
+          "description" : "The ID for a particular instance of a package",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "_pkgInstanceVersionID",
+          "in" : "query",
+          "description" : "The ID for a particular version of an instance of a package",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "_baseURI",
+          "in" : "query",
+          "description" : "The ID that uniquely identifies the author organization",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "_fullPkgURI",
+          "in" : "query",
+          "description" : "The full URI of a package, including the baseURI",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "_patientID1",
+          "in" : "query",
+          "description" : "A single ID for a particular patient",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "405" : {
+            "description" : "Invalid input"
+          }
+        },
+        "security" : [ {
+          "SDC_auth" : [ "write:pets", "read:pets" ]
+        } ]
+      },
+      "post" : {
+        "tags" : [ "SDC API Test" ],
+        "summary" : "Submit a form to Form Receiver",
+        "operationId" : "submitPackage",
+        "consumes" : [ "application/json", "application/xml" ],
+        "produces" : [ "application/xml" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "body",
+          "description" : "The SDC Form Package",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/SDCFormPackage"
+          }
+        } ],
+        "responses" : {
+          "405" : {
+            "description" : "Invalid input"
+          }
+        },
+        "security" : [ {
+          "SDC_auth" : [ "write:pets", "read:pets" ]
+        } ]
+      }
+    },
+    "/receiver/responsePackage/list" : {
+      "get" : {
+        "tags" : [ "SDC API Test" ],
+        "summary" : "Retrieves a response package list",
+        "operationId" : "retrieveResponsePackagelist",
+        "consumes" : [ "application/json", "application/xml" ],
+        "produces" : [ "application/xml" ],
+        "parameters" : [ {
+          "name" : "_baseURI",
+          "in" : "query",
+          "description" : "The ID that uniquely identifies the author organization",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "_contentDomain",
+          "in" : "query",
+          "description" : "The specialty the form is related to. contentDomain can be specified as Pathology, Radiology, Surgery, etc",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "_sdcSchemaVersion",
+          "in" : "query",
+          "description" : "The Schema version the Package is using",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "_lineage",
+          "in" : "query",
+          "description" : "Shared ID for all versions of an SDC package",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "_version",
+          "in" : "query",
+          "description" : "The version of the package you wish to retrieve",
+          "required" : false,
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "enum" : [ "all", "last", "current", "first" ],
+            "default" : "last"
+          },
+          "collectionFormat" : "multi"
+        }, {
+          "name" : "_offset",
+          "in" : "query",
+          "description" : "An integer which can be set to retrieve version prior or later than requested version (e.g. -1 will retrieve version before)",
+          "required" : false,
+          "type" : "integer",
+          "collectionFormat" : "multi"
+        }, {
+          "name" : "status",
+          "in" : "query",
+          "description" : "The current status of the form",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/SDCFormPackage"
+              }
+            }
+          },
+          "405" : {
+            "description" : "Invalid input"
+          }
+        },
+        "security" : [ {
+          "SDC_auth" : [ "write:pets", "read:pets" ]
+        } ]
+      }
+    }
+  },
+  "securityDefinitions" : {
+    "SDC_auth" : {
+      "type" : "oauth2",
+      "authorizationUrl" : "http://petstore.swagger.io/oauth/dialog",
+      "flow" : "implicit",
+      "scopes" : {
+        "write:pets" : "modify pets in your account",
+        "read:pets" : "read your pets"
+      }
+    },
+    "api_key" : {
+      "type" : "apiKey",
+      "name" : "api_key",
+      "in" : "header"
+    }
+  },
+  "definitions" : {
+    "SDCFormPackage" : {
+      "type" : "object",
+      "required" : [ "baseURI", "contentDomain", "offset", "pkgLineage", "sdcSchemaVersion", "version" ],
+      "properties" : {
+        "baseURI" : {
+          "type" : "string",
+          "example" : "www.cap.org/eCC/SDC/IHE"
+        },
+        "contentDomain" : {
+          "type" : "string",
+          "example" : "test"
+        },
+        "sdcSchemaVersion" : {
+          "type" : "string",
+          "example" : "null"
+        },
+        "pkgLineage" : {
+          "type" : "string",
+          "example" : "PKG_Adrenal"
+        },
+        "version" : {
+          "type" : "array",
+          "xml" : {
+            "name" : "version",
+            "wrapped" : true
+          },
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "offset" : {
+          "type" : "integer",
+          "example" : -1
+        }
+      },
+      "xml" : {
+        "name" : "SDCFormPackage"
+      },
+      "example" : {
+        "sdcSchemaVersion" : "null",
+        "offset" : -1,
+        "baseURI" : "www.cap.org/eCC/SDC/IHE",
+        "contentDomain" : "test",
+        "pkgLineage" : "PKG_Adrenal",
+        "version" : [ "version", "version" ]
+      }
+    }
+  },
+  "externalDocs" : {
+    "description" : "Find out more about Swagger",
+    "url" : "http://swagger.io"
+  }
+}
