@@ -1,0 +1,446 @@
+swagger: '2.0'
+info:
+  description: |
+    This is the test of the SDC REST API  
+    [SDC REST API Doc](https://goo.gl/YLo7Fq) and more on SDC at 
+    [http://wiki.ihe.net/index.php/Structured_Data_Capture](http://wiki.ihe.net/index.php/Structured_Data_Capture).
+  version: 1.0.0
+  title: IHE Structured Data Capture API 
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: sdcworkgroup@ihe.net
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+# basePath: /ihe/sdc/v.0.1
+tags:
+- name: SDC API Test
+  description: Testing the SDC API 
+  externalDocs:
+    description: SDC API Doc
+    url: https://goo.gl/YLo7Fq
+# schemes:
+# - http
+paths:
+  /manager/formPackage:
+    post:
+      tags:
+      - SDC API Test
+      summary: Upload submit a form to Form Manager
+      operationId: insertPackage
+      consumes:
+      - application/json
+      - application/xml
+      produces:
+      #- application/json
+      - application/xml
+      parameters:
+      - in: body
+        name: body
+        description: The SDC Form Package
+        required: true
+        schema:
+          $ref: '#/definitions/SDCFormPackage'
+      responses:
+        405:
+          description: Invalid input
+      security:
+      - SDC_auth:
+        - write:pets
+        - read:pets
+    get:
+      tags:
+      - SDC API Test
+      summary: Retrieves a Form Package
+      description: Form Filler requests a Form Package from Form Manager
+      operationId: RetrievePackage
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: _baseURI
+        in: query 
+        description: The ID that uniquely identifies the author organization
+        required: false
+        type: string  
+      - name: _sdcSchemaVersion
+        in: query 
+        description: The Schema version the Package is using 
+        required: false
+        type: string
+      - name: _lineage
+        in: query 
+        description: Shared ID for all versions of an SDC package 
+        required: false
+        type: string
+      - name: _version
+        in: query
+        description: The version of the package you wish to retrieve 
+        required: false
+        type: array
+        items:
+          type: string
+          enum:
+          #had to change from * to all because * was invalid character
+          - last
+          - first
+          - version_string
+          default: last
+      - name: _offset
+        in: query
+        description: An integer which can be set to retrieve version prior or later than requested version (e.g. -1 will retrieve version before)
+        required: false
+        type: integer
+      - name: _docType
+        in: query 
+        description: the type of document being requested 
+        type: array 
+        items: 
+          type: string 
+          enum: 
+          - sdcPKG
+          - sdcFDF
+          - sdcDE 
+          default: sdcPKG
+        collectionFormat: multi
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SDCFormPackage'
+        400:
+          description: Invalid status value
+      security:
+      - SDC_auth:
+        - write:pets
+        - read:pets
+  /manager/formPackage/list:
+    get:
+      tags:
+      - SDC API Test
+      summary: Retrieves a list of Form Packages
+      description: Form Filler requests a list of Form Packages from Form Manager
+      operationId: RetrievePackageList
+      produces:
+      - application/json
+      - application/xml
+      parameters:
+      - name: _baseURI
+        in: query 
+        description: The ID that uniquely identifies the author organization
+        required: false
+        type: string  
+      - name: _contentDomain
+        in: query 
+        description: The specialty the form is related to. contentDomain can be specified as Pathology, Radiology, Surgery, etc
+        required: false
+        type: string 
+        #do we want to define this as an Array. Do we have an appropriate value set for this? Ability to submit multiple should be allowed? 
+      - name: _sdcSchemaVersion
+        in: query 
+        description: The Schema version the Package is using 
+        required: false
+        type: string
+      - name: _lineage
+        in: query 
+        description: Shared ID for all versions of an SDC package 
+        required: false
+        type: string
+      - name: _version
+        in: query
+        description: The version of the package you wish to retrieve 
+        required: false
+        type: array
+        items:
+          type: string
+          enum:
+          - all
+          #had to change from * to all because * was invalid character
+          - last
+          - current
+          - first
+          default: last
+      - name: _offset
+        in: query
+        description: An integer which can be set to retrieve version prior or later than requested version (e.g. -1 will retrieve version before)
+        required: false
+        type: integer
+        collectionFormat: multi
+      - name: status
+        in: query
+        description: The current status of the form 
+        required: false
+        type: string
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/SDCFormPackageMetaData'
+        400:
+          description: Invalid status value
+      security:
+      - SDC_auth:
+        - write:pets
+        - read:pets
+  /receiver/responsePackage:
+      post:
+        tags:
+        - SDC API Test
+        summary: Submit a form to Form Receiver
+        operationId: submitPackage
+        consumes:
+        - application/json
+        - application/xml
+        produces:
+        #- application/json
+        - application/xml
+        parameters:
+        - in: body
+          name: body
+          description: The SDC Form Package
+          required: true
+          schema:
+            $ref: '#/definitions/SDCFormPackage'
+        responses:
+          405:
+            description: Invalid input
+        security:
+        - SDC_auth:
+          - write:pets
+          - read:pets
+      get:
+        tags:
+        - SDC API Test
+        summary: Retrieves a response package 
+        operationId: retrieveResponsePackage
+        consumes:
+        - application/json
+        - application/xml
+        produces:
+        #- application/json
+        - application/xml
+        #define parameters
+        parameters:
+        - name: _pkgInstanceID
+          in: query 
+          description: The ID for a particular instance of a package 
+          required: false
+          type: string
+        - name: _pkgInstanceVersionID
+          in: query 
+          description: The ID for a particular version of an instance of a package 
+          required: false
+          type: string
+        - name: _baseURI
+          in: query 
+          description: The ID that uniquely identifies the author organization
+          required: false
+          type: string
+        - name: _fullPkgURI
+          in: query 
+          description: The full URI of a package, including the baseURI 
+          required: false
+          type: string
+        - name: _patientID1
+          in: query 
+          description: A single ID for a particular patient
+          required: false
+          type: string
+        responses:
+          405:
+            description: Invalid input
+        security:
+        - SDC_auth:
+          - write:pets
+          - read:pets
+  /receiver/responsePackage/list:
+    get:
+        tags:
+        - SDC API Test
+        summary: Retrieves a response package list 
+        operationId: retrieveResponsePackagelist
+        consumes:
+        - application/json
+        - application/xml
+        produces:
+        #- application/json
+        - application/xml
+        #define parameters
+        parameters:
+        - name: _baseURI
+          in: query 
+          description: The ID that uniquely identifies the author organization
+          required: false
+          type: string
+        - name: _contentDomain
+          in: query 
+          description: The specialty the form is related to. contentDomain can be specified as Pathology, Radiology, Surgery, etc
+          required: false
+          type: string 
+          #do we want to define this as an Array. Do we have an appropriate value set for this? Ability to submit multiple should be allowed? 
+        - name: _sdcSchemaVersion
+          in: query 
+          description: The Schema version the Package is using 
+          required: false
+          type: string
+        - name: _lineage
+          in: query 
+          description: Shared ID for all versions of an SDC package 
+          required: false
+          type: string
+        - name: _version
+          in: query
+          description: The version of the package you wish to retrieve 
+          required: false
+          type: array
+          items:
+            type: string
+            enum:
+            - all
+            #had to change from * to all because * was invalid character
+            - last
+            - current
+            - first
+            default: last
+        - name: _offset
+        #Do we need offset for 
+          in: query
+          description: An integer which can be set to retrieve version prior or later than requested version (e.g. -1 will retrieve version before)
+          required: false
+          type: integer
+          collectionFormat: multi
+        - name: status
+          in: query
+          description: The current status of the form 
+          required: false
+          type: string  
+        responses:
+          200:
+            description: successful operation
+            schema:
+              type: array
+              items:
+                $ref: '#/definitions/SDCFormPackage'
+          405:
+            description: Invalid input
+        security:
+        - SDC_auth:
+          - write:pets
+          - read:pets
+securityDefinitions:
+#left SDC_auth as petstore example for now 
+  SDC_auth:
+    type: oauth2
+    authorizationUrl: http://petstore.swagger.io/oauth/dialog
+    flow: implicit
+    scopes:
+      write:pets: modify pets in your account
+      read:pets: read your pets
+  api_key:
+    type: apiKey
+    name: api_key
+    in: header
+definitions:
+  SDCFormPackageMetaData:
+    type: object
+    required:
+    - _baseURI
+    - _contentDomain
+    - _formManagerURI
+    - _sdcSchemaVersion
+    - _pkgLineage
+    - _version
+    - _format
+    properties:
+      _baseURI:
+        type: string
+        example: www.cap.org/eCC/SDC/IHE
+      _contentDomain: 
+        type: string
+        example: test
+      _formManagerURI: 
+        type: string
+        example: www.cap.org/eCC/SDC/IHE/FormManager
+      _sdcSchemaVersion:
+        type: string
+        example: 
+      _pkgLineage:
+        type: string
+        example: PKG_Adrenal
+      _version:
+        type: "array"
+        xml:
+          name: "version"
+          wrapped: true
+        items:
+          type: "string"
+      _format: 
+        type: "string"
+        enum: 
+          - XML
+          - JSON
+          - HTML
+          - URL 
+        example: XML 
+    xml:
+      name: SDCFormPackage
+  SDCFormPackage:
+    type: object
+    required:
+    - _baseURI
+    - _contentDomain
+    - _sdcSchemaVersion
+    - _pkgLineage
+    - _version
+    - _offset 
+    properties:
+      _baseURI:
+        type: string
+        example: www.cap.org/eCC/SDC/IHE
+      _contentDomain: 
+        type: string
+        example: test
+      _sdcSchemaVersion:
+        type: string
+        example: 
+      _pkgLineage:
+        type: string
+        example: PKG_Adrenal
+      _version:
+        type: "array"
+        xml:
+          name: "version"
+          wrapped: true
+        items:
+          type: "string"
+      _offset:
+        type: integer
+        example: -1
+    xml:
+      name: SDCFormPackage
+  #add ApiResponse when necessary 
+  #ApiResponse:
+#    type: object
+#    properties:
+#      code:
+#        type: integer
+#        format: int32
+ #     type:
+#        type: string
+ #     message:
+#        type: string
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.io
+# Added by API Auto Mocking Plugin
+host: virtserver.swaggerhub.com
+#basePath: /IHE-SDC4/ihesdc0/1.0.0
+schemes:
+ - https
+ - http
+# Added by API Auto Mocking Plugin
+basePath: /IHE-SDC4/ihesdc0/1.0.0
