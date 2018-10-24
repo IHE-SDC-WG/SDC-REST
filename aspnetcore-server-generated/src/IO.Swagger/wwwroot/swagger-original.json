@@ -39,6 +39,12 @@
           "required" : false,
           "type" : "string"
         }, {
+          "name" : "_sdcSchemaVersion",
+          "in" : "query",
+          "description" : "The Schema version the Package is using",
+          "required" : false,
+          "type" : "string"
+        }, {
           "name" : "_lineage",
           "in" : "query",
           "description" : "Shared ID for all versions of an SDC package",
@@ -52,8 +58,8 @@
           "type" : "array",
           "items" : {
             "type" : "string",
-            "enum" : [ "last", "first", "version_string" ],
-            "default" : "last"
+            "default" : "last",
+            "enum" : [ "last", "first", "version_string" ]
           },
           "collectionFormat" : "multi"
         }, {
@@ -61,17 +67,26 @@
           "in" : "query",
           "description" : "An integer which can be set to retrieve version prior or later than requested version (e.g. -1 will retrieve version before)",
           "required" : false,
-          "type" : "integer",
+          "type" : "integer"
+        }, {
+          "name" : "_docType",
+          "in" : "query",
+          "description" : "the type of document being requested",
+          "required" : false,
+          "type" : "array",
+          "items" : {
+            "type" : "string",
+            "default" : "sdcPKG",
+            "enum" : [ "sdcPKG", "sdcFDF", "sdcDE" ]
+          },
           "collectionFormat" : "multi"
         } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/SDCFormPackage"
-              }
+              "type" : "string",
+              "format" : "xml"
             }
           },
           "400" : {
@@ -146,8 +161,8 @@
           "type" : "array",
           "items" : {
             "type" : "string",
-            "enum" : [ "all", "last", "current", "first" ],
-            "default" : "last"
+            "default" : "last",
+            "enum" : [ "all", "last", "current", "first" ]
           },
           "collectionFormat" : "multi"
         }, {
@@ -170,7 +185,7 @@
             "schema" : {
               "type" : "array",
               "items" : {
-                "$ref" : "#/definitions/SDCFormPackage"
+                "$ref" : "#/definitions/SDCFormPackageMetaData"
               }
             }
           },
@@ -294,8 +309,8 @@
           "type" : "array",
           "items" : {
             "type" : "string",
-            "enum" : [ "all", "last", "current", "first" ],
-            "default" : "last"
+            "default" : "last",
+            "enum" : [ "all", "last", "current", "first" ]
           },
           "collectionFormat" : "multi"
         }, {
@@ -349,27 +364,30 @@
     }
   },
   "definitions" : {
-    "SDCFormPackage" : {
+    "SDCFormPackageMetaData" : {
       "type" : "object",
-      "required" : [ "baseURI", "contentDomain", "offset", "pkgLineage", "sdcSchemaVersion", "version" ],
+      "required" : [ "_baseURI", "_contentDomain", "_formManagerURI", "_format", "_pkgLineage", "_sdcSchemaVersion", "_version" ],
       "properties" : {
-        "baseURI" : {
+        "_baseURI" : {
           "type" : "string",
           "example" : "www.cap.org/eCC/SDC/IHE"
         },
-        "contentDomain" : {
+        "_contentDomain" : {
           "type" : "string",
           "example" : "test"
         },
-        "sdcSchemaVersion" : {
+        "_formManagerURI" : {
           "type" : "string",
-          "example" : "null"
+          "example" : "www.cap.org/eCC/SDC/IHE/FormManager"
         },
-        "pkgLineage" : {
+        "_sdcSchemaVersion" : {
+          "type" : "string"
+        },
+        "_pkgLineage" : {
           "type" : "string",
           "example" : "PKG_Adrenal"
         },
-        "version" : {
+        "_version" : {
           "type" : "array",
           "xml" : {
             "name" : "version",
@@ -379,7 +397,55 @@
             "type" : "string"
           }
         },
-        "offset" : {
+        "_format" : {
+          "type" : "string",
+          "example" : "XML",
+          "enum" : [ "XML", "JSON", "HTML", "URL" ]
+        }
+      },
+      "xml" : {
+        "name" : "SDCFormPackage"
+      },
+      "example" : {
+        "_baseURI" : "www.cap.org/eCC/SDC/IHE",
+        "_formManagerURI" : "www.cap.org/eCC/SDC/IHE/FormManager",
+        "_contentDomain" : "test",
+        "_sdcSchemaVersion" : "_sdcSchemaVersion",
+        "_pkgLineage" : "PKG_Adrenal",
+        "_format" : "XML",
+        "_version" : [ "_version", "_version" ]
+      }
+    },
+    "SDCFormPackage" : {
+      "type" : "object",
+      "required" : [ "_baseURI", "_contentDomain", "_offset", "_pkgLineage", "_sdcSchemaVersion", "_version" ],
+      "properties" : {
+        "_baseURI" : {
+          "type" : "string",
+          "example" : "www.cap.org/eCC/SDC/IHE"
+        },
+        "_contentDomain" : {
+          "type" : "string",
+          "example" : "test"
+        },
+        "_sdcSchemaVersion" : {
+          "type" : "string"
+        },
+        "_pkgLineage" : {
+          "type" : "string",
+          "example" : "PKG_Adrenal"
+        },
+        "_version" : {
+          "type" : "array",
+          "xml" : {
+            "name" : "version",
+            "wrapped" : true
+          },
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "_offset" : {
           "type" : "integer",
           "example" : -1
         }
@@ -388,12 +454,12 @@
         "name" : "SDCFormPackage"
       },
       "example" : {
-        "sdcSchemaVersion" : "null",
-        "offset" : -1,
-        "baseURI" : "www.cap.org/eCC/SDC/IHE",
-        "contentDomain" : "test",
-        "pkgLineage" : "PKG_Adrenal",
-        "version" : [ "version", "version" ]
+        "_baseURI" : "www.cap.org/eCC/SDC/IHE",
+        "_offset" : -1,
+        "_contentDomain" : "test",
+        "_sdcSchemaVersion" : "_sdcSchemaVersion",
+        "_pkgLineage" : "PKG_Adrenal",
+        "_version" : [ "_version", "_version" ]
       }
     }
   },

@@ -25,7 +25,7 @@ namespace IO.Swagger.Models
     /// 
     /// </summary>
     [DataContract]
-    public partial class SDCFormPackage : IEquatable<SDCFormPackage>
+    public partial class SDCFormPackageMetaData : IEquatable<SDCFormPackageMetaData>
     { 
         /// <summary>
         /// Gets or Sets BaseURI
@@ -40,6 +40,13 @@ namespace IO.Swagger.Models
         [Required]
         [DataMember(Name="_contentDomain")]
         public string ContentDomain { get; set; }
+
+        /// <summary>
+        /// Gets or Sets FormManagerURI
+        /// </summary>
+        [Required]
+        [DataMember(Name="_formManagerURI")]
+        public string FormManagerURI { get; set; }
 
         /// <summary>
         /// Gets or Sets SdcSchemaVersion
@@ -61,13 +68,42 @@ namespace IO.Swagger.Models
         [Required]
         [DataMember(Name="_version")]
         public List<string> Version { get; set; }
+        /// <summary>
+        /// Gets or Sets Format
+        /// </summary>
+        public enum FormatEnum
+        { 
+            /// <summary>
+            /// Enum XMLEnum for XML
+            /// </summary>
+            [EnumMember(Value = XML)]
+            XMLEnum = 1,
+            
+            /// <summary>
+            /// Enum JSONEnum for JSON
+            /// </summary>
+            [EnumMember(Value = JSON)]
+            JSONEnum = 2,
+            
+            /// <summary>
+            /// Enum HTMLEnum for HTML
+            /// </summary>
+            [EnumMember(Value = HTML)]
+            HTMLEnum = 3,
+            
+            /// <summary>
+            /// Enum URLEnum for URL
+            /// </summary>
+            [EnumMember(Value = URL)]
+            URLEnum = 4
+        }
 
         /// <summary>
-        /// Gets or Sets Offset
+        /// Gets or Sets Format
         /// </summary>
         [Required]
-        [DataMember(Name="_offset")]
-        public int? Offset { get; set; }
+        [DataMember(Name="_format")]
+        public FormatEnum? Format { get; set; }
 
         /// <summary>
         /// Returns the string presentation of the object
@@ -76,13 +112,14 @@ namespace IO.Swagger.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.Append("class SDCFormPackage {\n");
+            sb.Append("class SDCFormPackageMetaData {\n");
             sb.Append("  BaseURI: ").Append(BaseURI).Append("\n");
             sb.Append("  ContentDomain: ").Append(ContentDomain).Append("\n");
+            sb.Append("  FormManagerURI: ").Append(FormManagerURI).Append("\n");
             sb.Append("  SdcSchemaVersion: ").Append(SdcSchemaVersion).Append("\n");
             sb.Append("  PkgLineage: ").Append(PkgLineage).Append("\n");
             sb.Append("  Version: ").Append(Version).Append("\n");
-            sb.Append("  Offset: ").Append(Offset).Append("\n");
+            sb.Append("  Format: ").Append(Format).Append("\n");
             sb.Append("}\n");
             return sb.ToString();
         }
@@ -105,15 +142,15 @@ namespace IO.Swagger.Models
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((SDCFormPackage)obj);
+            return obj.GetType() == GetType() && Equals((SDCFormPackageMetaData)obj);
         }
 
         /// <summary>
-        /// Returns true if SDCFormPackage instances are equal
+        /// Returns true if SDCFormPackageMetaData instances are equal
         /// </summary>
-        /// <param name="other">Instance of SDCFormPackage to be compared</param>
+        /// <param name="other">Instance of SDCFormPackageMetaData to be compared</param>
         /// <returns>Boolean</returns>
-        public bool Equals(SDCFormPackage other)
+        public bool Equals(SDCFormPackageMetaData other)
         {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
@@ -128,6 +165,11 @@ namespace IO.Swagger.Models
                     ContentDomain == other.ContentDomain ||
                     ContentDomain != null &&
                     ContentDomain.Equals(other.ContentDomain)
+                ) && 
+                (
+                    FormManagerURI == other.FormManagerURI ||
+                    FormManagerURI != null &&
+                    FormManagerURI.Equals(other.FormManagerURI)
                 ) && 
                 (
                     SdcSchemaVersion == other.SdcSchemaVersion ||
@@ -145,9 +187,9 @@ namespace IO.Swagger.Models
                     Version.SequenceEqual(other.Version)
                 ) && 
                 (
-                    Offset == other.Offset ||
-                    Offset != null &&
-                    Offset.Equals(other.Offset)
+                    Format == other.Format ||
+                    Format != null &&
+                    Format.Equals(other.Format)
                 );
         }
 
@@ -165,14 +207,16 @@ namespace IO.Swagger.Models
                     hashCode = hashCode * 59 + BaseURI.GetHashCode();
                     if (ContentDomain != null)
                     hashCode = hashCode * 59 + ContentDomain.GetHashCode();
+                    if (FormManagerURI != null)
+                    hashCode = hashCode * 59 + FormManagerURI.GetHashCode();
                     if (SdcSchemaVersion != null)
                     hashCode = hashCode * 59 + SdcSchemaVersion.GetHashCode();
                     if (PkgLineage != null)
                     hashCode = hashCode * 59 + PkgLineage.GetHashCode();
                     if (Version != null)
                     hashCode = hashCode * 59 + Version.GetHashCode();
-                    if (Offset != null)
-                    hashCode = hashCode * 59 + Offset.GetHashCode();
+                    if (Format != null)
+                    hashCode = hashCode * 59 + Format.GetHashCode();
                 return hashCode;
             }
         }
@@ -180,12 +224,12 @@ namespace IO.Swagger.Models
         #region Operators
         #pragma warning disable 1591
 
-        public static bool operator ==(SDCFormPackage left, SDCFormPackage right)
+        public static bool operator ==(SDCFormPackageMetaData left, SDCFormPackageMetaData right)
         {
             return Equals(left, right);
         }
 
-        public static bool operator !=(SDCFormPackage left, SDCFormPackage right)
+        public static bool operator !=(SDCFormPackageMetaData left, SDCFormPackageMetaData right)
         {
             return !Equals(left, right);
         }

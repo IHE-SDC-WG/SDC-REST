@@ -55,31 +55,33 @@ namespace IO.Swagger.Controllers
         /// </summary>
         /// <remarks>Form Filler requests a Form Package from Form Manager</remarks>
         /// <param name="baseURI">The ID that uniquely identifies the author organization</param>
+        /// <param name="sdcSchemaVersion">The Schema version the Package is using</param>
         /// <param name="lineage">Shared ID for all versions of an SDC package</param>
         /// <param name="version">The version of the package you wish to retrieve</param>
         /// <param name="offset">An integer which can be set to retrieve version prior or later than requested version (e.g. -1 will retrieve version before)</param>
+        /// <param name="docType">the type of document being requested</param>
         /// <response code="200">successful operation</response>
         /// <response code="400">Invalid status value</response>
         [HttpGet]
         [Route("/IHE-SDC4/ihesdc0/1.0.0/manager/formPackage")]
         [ValidateModelState]
         [SwaggerOperation("RetrievePackage")]
-        [SwaggerResponse(statusCode: 200, type: typeof(List<SDCFormPackage>), description: "successful operation")]
-        public virtual IActionResult RetrievePackage([FromQuery]string baseURI, [FromQuery]string lineage, [FromQuery]List<string> version, [FromQuery]int? offset)
+        [SwaggerResponse(statusCode: 200, type: typeof(string), description: "successful operation")]
+        public virtual IActionResult RetrievePackage([FromQuery]string baseURI, [FromQuery]string sdcSchemaVersion, [FromQuery]string lineage, [FromQuery]List<string> version, [FromQuery]int? offset, [FromQuery]List<string> docType)
         { 
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(List<SDCFormPackage>));
+            // return StatusCode(200, default(string));
 
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400);
 
             string exampleJson = null;
-            exampleJson = "[ {\n  \"sdcSchemaVersion\" : \"null\",\n  \"offset\" : -1,\n  \"baseURI\" : \"www.cap.org/eCC/SDC/IHE\",\n  \"contentDomain\" : \"test\",\n  \"pkgLineage\" : \"PKG_Adrenal\",\n  \"version\" : [ \"version\", \"version\" ]\n}, {\n  \"sdcSchemaVersion\" : \"null\",\n  \"offset\" : -1,\n  \"baseURI\" : \"www.cap.org/eCC/SDC/IHE\",\n  \"contentDomain\" : \"test\",\n  \"pkgLineage\" : \"PKG_Adrenal\",\n  \"version\" : [ \"version\", \"version\" ]\n} ]";
-            exampleJson = "<SDCFormPackage>\n  <baseURI>www.cap.org/eCC/SDC/IHE</baseURI>\n  <contentDomain>test</contentDomain>\n  <sdcSchemaVersion>null</sdcSchemaVersion>\n  <pkgLineage>PKG_Adrenal</pkgLineage>\n  <version>\n    <version>aeiou</version>\n  </version>\n  <offset>-1</offset>\n</SDCFormPackage>";
+            exampleJson = "\"\"";
+            exampleJson = "aeiou";
             
             var example = exampleJson != null
-            ? JsonConvert.DeserializeObject<List<SDCFormPackage>>(exampleJson)
-            : default(List<SDCFormPackage>);
+            ? JsonConvert.DeserializeObject<string>(exampleJson)
+            : default(string);
             //TODO: Change the data returned
             return new ObjectResult(example);
         }
@@ -101,22 +103,22 @@ namespace IO.Swagger.Controllers
         [Route("/IHE-SDC4/ihesdc0/1.0.0/manager/formPackage/list")]
         [ValidateModelState]
         [SwaggerOperation("RetrievePackageList")]
-        [SwaggerResponse(statusCode: 200, type: typeof(List<SDCFormPackage>), description: "successful operation")]
+        [SwaggerResponse(statusCode: 200, type: typeof(List<SDCFormPackageMetaData>), description: "successful operation")]
         public virtual IActionResult RetrievePackageList([FromQuery]string baseURI, [FromQuery]string contentDomain, [FromQuery]string sdcSchemaVersion, [FromQuery]string lineage, [FromQuery]List<string> version, [FromQuery]int? offset, [FromQuery]string status)
         { 
             //TODO: Uncomment the next line to return response 200 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
-            // return StatusCode(200, default(List<SDCFormPackage>));
+            // return StatusCode(200, default(List<SDCFormPackageMetaData>));
 
             //TODO: Uncomment the next line to return response 400 or use other options such as return this.NotFound(), return this.BadRequest(..), ...
             // return StatusCode(400);
 
             string exampleJson = null;
-            exampleJson = "[ {\n  \"sdcSchemaVersion\" : \"null\",\n  \"offset\" : -1,\n  \"baseURI\" : \"www.cap.org/eCC/SDC/IHE\",\n  \"contentDomain\" : \"test\",\n  \"pkgLineage\" : \"PKG_Adrenal\",\n  \"version\" : [ \"version\", \"version\" ]\n}, {\n  \"sdcSchemaVersion\" : \"null\",\n  \"offset\" : -1,\n  \"baseURI\" : \"www.cap.org/eCC/SDC/IHE\",\n  \"contentDomain\" : \"test\",\n  \"pkgLineage\" : \"PKG_Adrenal\",\n  \"version\" : [ \"version\", \"version\" ]\n} ]";
-            exampleJson = "<SDCFormPackage>\n  <baseURI>www.cap.org/eCC/SDC/IHE</baseURI>\n  <contentDomain>test</contentDomain>\n  <sdcSchemaVersion>null</sdcSchemaVersion>\n  <pkgLineage>PKG_Adrenal</pkgLineage>\n  <version>\n    <version>aeiou</version>\n  </version>\n  <offset>-1</offset>\n</SDCFormPackage>";
+            exampleJson = "[ {\n  \"_baseURI\" : \"www.cap.org/eCC/SDC/IHE\",\n  \"_formManagerURI\" : \"www.cap.org/eCC/SDC/IHE/FormManager\",\n  \"_contentDomain\" : \"test\",\n  \"_sdcSchemaVersion\" : \"_sdcSchemaVersion\",\n  \"_pkgLineage\" : \"PKG_Adrenal\",\n  \"_format\" : \"XML\",\n  \"_version\" : [ \"_version\", \"_version\" ]\n}, {\n  \"_baseURI\" : \"www.cap.org/eCC/SDC/IHE\",\n  \"_formManagerURI\" : \"www.cap.org/eCC/SDC/IHE/FormManager\",\n  \"_contentDomain\" : \"test\",\n  \"_sdcSchemaVersion\" : \"_sdcSchemaVersion\",\n  \"_pkgLineage\" : \"PKG_Adrenal\",\n  \"_format\" : \"XML\",\n  \"_version\" : [ \"_version\", \"_version\" ]\n} ]";
+            exampleJson = "<SDCFormPackage>\n  <_baseURI>www.cap.org/eCC/SDC/IHE</_baseURI>\n  <_contentDomain>test</_contentDomain>\n  <_formManagerURI>www.cap.org/eCC/SDC/IHE/FormManager</_formManagerURI>\n  <_sdcSchemaVersion>aeiou</_sdcSchemaVersion>\n  <_pkgLineage>PKG_Adrenal</_pkgLineage>\n  <_version>\n    <_version>aeiou</_version>\n  </_version>\n  <_format>XML</_format>\n</SDCFormPackage>";
             
             var example = exampleJson != null
-            ? JsonConvert.DeserializeObject<List<SDCFormPackage>>(exampleJson)
-            : default(List<SDCFormPackage>);
+            ? JsonConvert.DeserializeObject<List<SDCFormPackageMetaData>>(exampleJson)
+            : default(List<SDCFormPackageMetaData>);
             //TODO: Change the data returned
             return new ObjectResult(example);
         }
@@ -171,7 +173,7 @@ namespace IO.Swagger.Controllers
             // return StatusCode(405);
 
             string exampleJson = null;
-            exampleJson = "<SDCFormPackage>\n  <baseURI>www.cap.org/eCC/SDC/IHE</baseURI>\n  <contentDomain>test</contentDomain>\n  <sdcSchemaVersion>null</sdcSchemaVersion>\n  <pkgLineage>PKG_Adrenal</pkgLineage>\n  <version>\n    <version>aeiou</version>\n  </version>\n  <offset>-1</offset>\n</SDCFormPackage>";
+            exampleJson = "<SDCFormPackage>\n  <_baseURI>www.cap.org/eCC/SDC/IHE</_baseURI>\n  <_contentDomain>test</_contentDomain>\n  <_sdcSchemaVersion>aeiou</_sdcSchemaVersion>\n  <_pkgLineage>PKG_Adrenal</_pkgLineage>\n  <_version>\n    <_version>aeiou</_version>\n  </_version>\n  <_offset>-1</_offset>\n</SDCFormPackage>";
             
             var example = exampleJson != null
             ? JsonConvert.DeserializeObject<List<SDCFormPackage>>(exampleJson)
